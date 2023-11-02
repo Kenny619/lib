@@ -23,7 +23,8 @@ function moveDir(srcDir, dstDir, regExp = false, mode = "copy") {
       fs.readdir(srcDir, { withFileTypes: true, recursive: true }, (err, files) => {
         if (err) reject(`⛔ Failed to read files from ${dstDir}\r\n${err}`);
 
-        const ff = files.filter(f => !f.isDirectory() && regExp.test(f.name));
+        const ff = regExp === false ? files.filter(f => !f.isDirectory()) : files.filter(f => !f.isDirectory() && regExp.test(f.name));
+
         const fileVol = ff.length;
 
         files.forEach(file => {
@@ -63,7 +64,7 @@ function moveDir(srcDir, dstDir, regExp = false, mode = "copy") {
 }
 
 /**
- * Copy/Move a single
+ * Copy/Move a single file
  *
  * @param {string} srcFilePath - The source directory to move files from.
  * @param {string} dstFilePath - The dstination directory to move files to.
@@ -88,9 +89,11 @@ function moveFile(srcFilePath, dstFilePath, mode = "copy") {
         if (mode === "cut") {
           fs.unlink(srcFilePath, err => {
             if (err) console.log(`⚠ Failed to delete file ${file}`);
+            resolve(dstFilePath);
           });
+        } else {
+          resolve(dstFilePath);
         }
-        resolve(dstFilePath);
       });
     });
   });
