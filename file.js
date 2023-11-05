@@ -35,13 +35,10 @@ function moveDir(srcDir, dstDir, regExp = false, mode = "copy") {
           const subDir = file.path.replace(srcDir, "");
           const srcFilePath = path.join(file.path, file.name);
           const dstFilePath = path.join(dstDir, subDir, file.name);
+          const dstPath = path.join(dstDir, subDir);
 
-          if (file.isDirectory()) {
-            if (!fs.existsSync(path.join(dstDir, subDir))) fs.mkdirSync(path.join(dstDir, subDir));
-            return false;
-          }
-
-          if (!fs.existsSync(path.join(dstDir, subDir))) fs.mkdirSync(path.join(dstDir, subDir));
+          if (!fs.existsSync(dstPath)) fs.mkdirSync(dstPath);
+          if (file.isDirectory()) return false;
 
           fs.copyFile(srcFilePath, dstFilePath, err => {
             if (err) reject(`⛔ Failed to copy file \r\nFROM:${srcFilePath}\r\nTO:${dstFilePath}\r\n${err}`);
