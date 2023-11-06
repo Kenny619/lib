@@ -1,4 +1,13 @@
 const moveFiles = require("../lib/file.js");
+const my = require("./myUtil.js");
+
+const roundTo2 = my.round(2);
+console.log(roundTo2(1.005));
+
+const string = "test 02";
+const regex = RegExp(/^(.*?) (\d{1,3})$/);
+const [name, vol] = string.match(regex) && [RegExp.$1, parseInt(RegExp.$2)];
+console.log(name, vol);
 
 const testAry = [
   {
@@ -12,8 +21,8 @@ const testAry = [
       h1: 1,
       h2: 2,
       p: {
-        title: p1,
-        body: p2,
+        title: "p1",
+        body: "p2",
       },
     },
     footer: {
@@ -51,6 +60,8 @@ const testObj = {
   },
 };
 
-const searchObjAll = (obj) => {
-  Object.entries(obj).forEach((o) => {});
+const searchObjAll = obj => {
+  Object.entries(obj).forEach(o => {});
 };
+
+console.log(my.pluck(testAry, "h1"));
