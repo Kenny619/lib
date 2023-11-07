@@ -10,79 +10,97 @@ class FantaDT {
     this.date = date;
     this.time = time;
 
-    this.datetime = new Date([this.date, this.time].join("T"));
+    this.UTCdatetime = new Date([this.date, this.time].join("T"));
     this.generateLocalDatetime();
   }
 
   generateLocalDatetime = () => {
-    this.dateLocal = this.datetime.toLocaleDateString();
-    this.timeLocal = this.datetime.toLocaleTimeString();
-    [this.yearLocal, this.monthLocal, this.dayLocal] = this.dateLocal.split("/");
-    [this.hhLocal, this.mmLocal, this.ssLocal] = this.timeLocal.split(":");
-    [this.yearLocal, this.monthLocal, this.dayLocal] = this.dateLocal.split("/");
-    [this.hhLocal, this.mmLocal, this.ssLocal] = this.timeLocal.split(":");
+    this.localDate = this.UTCdatetime.toLocaleDateString();
+    this.localTime = this.UTCdatetime.toLocaleTimeString();
+    [this.localYear, this.localMonth, this.localDay] =
+      this.localDate.split("/");
+    [this.localHH, this.localMM, this.localSS] = this.localTime.split(":");
+
+    this.localDatetimeString =
+      [
+        this.localYear,
+        this.localMonth.padStart(2, "0"),
+        this.localDay.padStart(2, "0"),
+      ].join("-") +
+      "T" +
+      [this.localHH.padStart(2, "0"), this.localMM.padStart(2, "0")].join(":");
+    this.localDatetime = new Date(this.localDatetimeString);
   };
 
   getDatetime = () => {
-    return this.datetime;
+    return this.UTCdatetime;
   };
 
-  getDatetimeLocal = () => {
-    return [this.yearLocal, this.monthLocal, this.dayLocal].join("-") + "T" + [this.hhLocal, this.mmLocal].join(":");
+  getLocalDatetime = () => {
+    return this.localDatetimeString;
   };
 
-  getYYYYMMstring = () => {
-    return this.yearLocal + this.monthLocal.padStart(2, "0");
+  getLocalYearMonthString = () => {
+    return this.localYear + this.localMonth.padStart(2, "0");
   };
 
   getCalendarPosition = () => {
-    const dpicker = new Date(this.yearLocal, this.monthLocal - 1, 1);
-    const numCol = this.datetime.getDay() + 1; //🐛 === this needs to be in local date;
-    const numRow = Math.floor((publishDT.getDate() + this.datetime.getDay() - 1) / 7) + 1;
+    const thisMonth = new Date(this.localYear, this.localMonth - 1, 1);
+    const numCol = this.localDatetime.getDay() + 1;
+    const numRow =
+      Math.floor((thisMonth.getDay() + this.localDatetime.getDate() - 1) / 7) +
+      1;
     return { Numrow: numRow, Numcol: numCol };
   };
 
   getAmPm = () => {
-    return this.hhLocal >= 0 && this.hhLocal < 12 ? "am" : "pm";
+    return this.localHH >= 0 && this.localHH < 12 ? "am" : "pm";
   };
 
   adjustMinutes = () => {
-    console.log(this.datetime, this.datetime.getMinutes());
-    if (this.datetime.getMinutes() % 5 !== 0) {
-      const newMM = Math.ceil(this.datetime.getMinutes() / 5) * 5;
-      this.datetime = new Date(`${this.date}T${this.datetime.getHours()}:${newMM}`);
+    if (this.getLocalMinutes % 5 !== 0) {
+      const diffMinutes =
+        Math.ceil(this.getLocalMinutes() / 5) * 5 - this.getLocalMinutes();
+      this.UTCdatetime = new Date(
+        this.UTCdatetime.getTime() + diffMinutes * 60 * 1000
+      );
       this.generateLocalDatetime();
     }
   };
 
-  getDatePickerYearMonth = calendarYearMonth => {
+  getDatePickerYearMonth = (calendarYearMonth) => {
     calendarYYYYMM = calendarYearMonth.replace(/月/, "").split("年");
     calendarYYYYMM[1] = String(DatePickerYearMonth[1]).padStart(2, "0");
     return calendarYYYYMM.join("");
   };
 
-  getHour = () => {
-    return this.hhLocal;
+  getUTCHour = () => {
+    return this.UTCHH;
   };
 
-  getMinutes = () => {
-    return this.mmLocal;
+  getLocalMinutes = () => {
+    return this.localMM;
   };
 
-  delayPostingByXmin = x => {
-    this.datetime = new Date(this.datetime.getTime() + x * 60000);
+  getLocalHour = () => {
+    return this.localHH;
+  };
+
+  getLocalMinutes = () => {
+    return this.localMM;
+  };
+
+  setTimeToXminLater = (x) => {
+    this.UTCdatetime = new Date(Date.now() + x * 60 * 1000);
     this.generateLocalDatetime();
   };
 
-  isSchedulable = datetimeStr => {
-    const givenDate = new Date(datetimeStr);
-    const currentDate = new Date();
-
-    // Calculate the difference in milliseconds
-    const timeDifference = givenDate - currentDate;
+  isSchedulable = () => {
+    const nowDatetime = new Date();
+    console.log(nowDatetime, this.UTCdatetime);
 
     // Check if the time difference is greater than 15 minutes (900,000 milliseconds)
-    return timeDifference > 900000;
+    return this.UTCdatetime.getTime() > nowDatetime.getTime() + 15 * 60 * 1000;
   };
 }
 
