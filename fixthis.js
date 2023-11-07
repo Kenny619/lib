@@ -24,7 +24,8 @@ const DEBUG_MODE = false; //true; // false;
 
 ////////driver/////////////////////////////////////////////////////
 const uploadObjs = createImgSeries(root, completeTxt);
-if (uploadObjs.length === 0) fUtil.throwNewError(`No directories with images found.`);
+if (uploadObjs.length === 0)
+  fUtil.throwNewError(`No directories with images found.`);
 
 console.log(uploadObjs);
 return false;
@@ -53,7 +54,7 @@ function recur(fn, paramGen) {
   const param = paramGen();
   if (!param) return false; //end recursion
 
-  fn(param).then(r => {
+  fn(param).then((r) => {
     console.log(r);
     recur(fn, paramGen);
   });
@@ -63,7 +64,9 @@ async function uploader(obj) {
   try {
     await prepImages(obj.dirPath);
   } catch (err) {
-    fUtil.throwNewError(`Failed to run prepImages on ${obj.dirPath}.  \r\n${err}`);
+    fUtil.throwNewError(
+      `Failed to run prepImages on ${obj.dirPath}.  \r\n${err}`
+    );
   }
 
   return false;
@@ -95,8 +98,14 @@ async function uploader(obj) {
   console.log(`⏩ ${obj.dir} - tile done `);
 
   //image upload
-  const imgToPublish = fs.readdirSync(publishDir).map(f => path.join(publishDir, f));
-  const [fileChooser] = await Promise.all([page.waitForFileChooser(), page.waitForSelector(".image-panel__add-button button"), page.click(".image-panel__add-button button")]);
+  const imgToPublish = fs
+    .readdirSync(publishDir)
+    .map((f) => path.join(publishDir, f));
+  const [fileChooser] = await Promise.all([
+    page.waitForFileChooser(),
+    page.waitForSelector(".image-panel__add-button button"),
+    page.click(".image-panel__add-button button"),
+  ]);
   await fileChooser.accept(imgToPublish);
   await page.waitForSelector("ul.image-panel__list");
   await page.waitForTimeout(1000);
@@ -104,9 +113,18 @@ async function uploader(obj) {
   console.log(`⏩ ${obj.dir} - uploading images `);
 
   //validate the number of images uploaded.
-  const uploadedImgCnt = await page.evaluate(() => document.querySelectorAll("div.image-panel > div.image-panel__body > div > ul.image-panel__list > li").length);
+  const uploadedImgCnt = await page.evaluate(
+    () =>
+      document.querySelectorAll(
+        "div.image-panel > div.image-panel__body > div > ul.image-panel__list > li"
+      ).length
+  );
   if (imgToPublish.length !== uploadedImgCnt) {
-    console.warn(`Missing upload images.  Uploaded ${uploadedImgCnt}/${imgFiles.length}.  Missing ${imgFiles.length - uploadedImgCnt} images.`);
+    console.warn(
+      `Missing upload images.  Uploaded ${uploadedImgCnt}/${
+        imgFiles.length
+      }.  Missing ${imgFiles.length - uploadedImgCnt} images.`
+    );
   }
 
   await page.waitForTimeout(1000);
@@ -120,8 +138,13 @@ async function uploader(obj) {
   //create date obj
   const vol = (obj.dir.match(/0?(\d{1,3})$/) && RegExp.$1) || 0;
   const [year, month, day] = obj.config.date.split("-");
-  const publishDT = new Date(Number(year), Number(month) - 1, Number(day) + Number(vol) - 1);
-  const publishDtYearMonth = publishDT.getFullYear() + String(publishDT.getMonth() + 1).padStart(2, "0");
+  const publishDT = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day) + Number(vol) - 1
+  );
+  const publishDtYearMonth =
+    publishDT.getFullYear() + String(publishDT.getMonth() + 1).padStart(2, "0");
 
   //currentYearMonth = Month of the date picker calendar displayed in yyyymm
   await page.click("div.my-2 > button.v-btn");
@@ -133,7 +156,10 @@ async function uploader(obj) {
   function getDatePickerYearMonth() {
     return (async () => {
       let element = await page.$("div.accent--text > button");
-      let DatePickerYearMonth = await page.evaluate(el => el.textContent, element);
+      let DatePickerYearMonth = await page.evaluate(
+        (el) => el.textContent,
+        element
+      );
       DatePickerYearMonth = DatePickerYearMonth.replace(/月/, "").split("年");
       DatePickerYearMonth[1] = String(DatePickerYearMonth[1]).padStart(2, "0");
       return DatePickerYearMonth.join("");
@@ -143,7 +169,10 @@ async function uploader(obj) {
 
   //click on "Previous/Next" month button until publish yearMonth matches date picker yearMonth.
   while (publishDtYearMonth !== DatePickerYearMonth) {
-    const label = publishDtYearMonth < DatePickerYearMonth ? "Previous month" : "Next month";
+    const label =
+      publishDtYearMonth < DatePickerYearMonth
+        ? "Previous month"
+        : "Next month";
     await page.click(`button[aria-label="${label}"`);
     await page.waitForTimeout(500);
     DatePickerYearMonth = await getDatePickerYearMonth();
@@ -154,7 +183,9 @@ async function uploader(obj) {
   const firstDay = dpicker.getDay();
   const numRow = Math.floor((publishDT.getDate() + firstDay - 1) / 7) + 1;
 
-  await page.click(`div.v-date-picker-table tr:nth-child(${numRow}) td:nth-child(${numCol}) button`);
+  await page.click(
+    `div.v-date-picker-table tr:nth-child(${numRow}) td:nth-child(${numCol}) button`
+  );
   //await page.waitForTimeout(500);
   console.log(`⏩ ${obj.dir} - Date set `);
   await page.click("a[href='#tab-time']");
@@ -167,9 +198,14 @@ async function uploader(obj) {
 
   //time
   await page.waitForTimeout(500);
-  if (obj.config.time === "pm") await page.click("div.v-time-picker-clock__ampm > div.v-picker__title__btn:nth-child(2)");
+  if (obj.config.time === "pm")
+    await page.click(
+      "div.v-time-picker-clock__ampm > div.v-picker__title__btn:nth-child(2)"
+    );
   await page.waitForTimeout(500);
-  await page.click("#tab-time > div > div.v-picker__actions.v-card__actions > button:nth-child(3)");
+  await page.click(
+    "#tab-time > div > div.v-picker__actions.v-card__actions > button:nth-child(3)"
+  );
   await page.waitForTimeout(500);
 
   console.log(`⏩ ${obj.dir} - setting tag. `);
@@ -208,7 +244,9 @@ async function uploader(obj) {
 */
 
   console.log(`⏩ ${obj.dir} - reserve setting.`);
-  await page.click("#app > div.v-application--wrap > div.app-container > div.layout-container > div > div.l-main.is-pc > div > div.layout-edit-post__side > ul > li:nth-child(1) > button");
+  await page.click(
+    "#app > div.v-application--wrap > div.app-container > div.layout-container > div > div.l-main.is-pc > div > div.layout-edit-post__side > ul > li:nth-child(1) > button"
+  );
   await page.waitForSelector(".v-image__image--cover");
   console.log(`💾 ${obj.dir} - Upload complete.`);
   await browser.close();

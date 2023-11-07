@@ -90,6 +90,10 @@ class FantaDT {
     return this.localMM;
   };
 
+  getLocalTime = () => {
+    return this.localHH + ":" + this.localMM;
+  };
+
   setTimeToXminLater = (x) => {
     this.UTCdatetime = new Date(Date.now() + x * 60 * 1000);
     this.generateLocalDatetime();
@@ -97,8 +101,6 @@ class FantaDT {
 
   isSchedulable = () => {
     const nowDatetime = new Date();
-    console.log(nowDatetime, this.UTCdatetime);
-
     // Check if the time difference is greater than 15 minutes (900,000 milliseconds)
     return this.UTCdatetime.getTime() > nowDatetime.getTime() + 15 * 60 * 1000;
   };

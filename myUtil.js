@@ -11,7 +11,7 @@ class Utilities {
    * @param {error} err - Catched err val
    */
 
-  throwNewErr = err => {
+  throwNewErr = (err) => {
     throw new Error(err);
   };
 
@@ -22,10 +22,11 @@ class Utilities {
    * @returns {any} returns val
    */
 
-  return = val => {
+  return = (val) => {
     return val;
   };
 
+  getObject = (arr, key, val) => arr.filter((obj) => obj[key] === val);
   /**
    * Searches key from an array of objects and return its values
    *
@@ -33,10 +34,11 @@ class Utilities {
    * @param {any} key - Key to be searched
    * @returns {Array} - Array of object values from searched key
    */
-  pluck = (objs, key) => objs.map(obj => obj[key]);
+  pluck = (objs, key) => objs.map((obj) => obj[key]);
 
-  round = digits => {
-    return decimal => Number(Math.round(decimal + "e" + digits) + "e-" + digits);
+  round = (digits) => {
+    return (decimal) =>
+      Number(Math.round(decimal + "e" + digits) + "e-" + digits);
   };
 }
 

@@ -21,6 +21,8 @@
     "date-holidays": "^3.23.0",
     "fs": "^0.0.1-security",
     "luxon": "^3.4.3",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "puppeteer": "^21.4.1",
+    "puppeteer-core": "^21.4.1"
   }
 }
