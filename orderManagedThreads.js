@@ -15,6 +15,36 @@ let atasks = Array(numberOfTasks)
 //orderedAsyncPost();
 syncPost();
 
+/** thread management */
+const paramGenerator = paramGenConstructor(uploadObjs);
+thread(4, uploader, paramGenerator, recur);
+
+function paramGenConstructor(passedObj) {
+  if (passedObj.length === 0) return false;
+  let obj = passedObj;
+
+  return () => {
+    if (obj.length === 0) return false;
+    return obj.shift();
+  };
+}
+
+function thread(maxThreads, uploader, paramGen, recursion) {
+  for (n = 0; n < maxThreads; n++) {
+    recursion(uploader, paramGen);
+  }
+}
+
+function recur(fn, paramGen) {
+  const param = paramGen();
+  if (!param) return false; //end recursion
+
+  fn(param).then(r => {
+    console.log(r);
+    recur(fn, paramGen);
+  });
+}
+
 /** async tasks */
 function atask(id) {
   const timeout = ms;
@@ -66,6 +96,7 @@ function orderedAsyncPost() {
   });
 }
 
+/** notes 
 async function syncPost() {
   console.time("syncpost");
   while (resolveId !== numberOfTasks) {
@@ -91,3 +122,4 @@ const resolver = resolveId => {
 };
 
 //resolver(0);
+*/
