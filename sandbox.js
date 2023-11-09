@@ -1,8 +1,8 @@
-//const my = require("./myUtil.js");
-const Progressbar = require("./progress-bar.js");
-//const pb = new Progressbar("progress", 0, 10);
-
-const pb = new Progressbar();
-
-const pb1 = pb.create("seriesA", 0, 10);
-pb1.increment(1);
+let ary = Array(4).fill(undefined);
+Object.seal(ary);
+ary.push(1);
+ary.push(2);
+ary.push(3);
+ary.push(4);
+ary.push(5);
+console.log(ary);

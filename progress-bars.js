@@ -32,7 +32,7 @@ class Progressbars {
     this.render();
   }
 
-  updateArray = (id) => {
+  updateArray = id => {
     this.getPercenetage();
     this.getBar();
     const obj = {
@@ -54,26 +54,36 @@ class Progressbars {
     this.updateArray(this.id);
     this.render();
 
-    if (array.every((entry) => entry.percentage === 100)) {
+    if (array.every(entry => entry.percentage === 100)) {
       std.close();
     }
   };
 
   render = () => {
-    let output = "";
+    /** get terminal width */
+    const width = process.stdout.columns || 50;
+    /**
+     * 15 percentage + fraction
+     * 20 bar
+     * 15 name
+     */
 
+    /** adjust name position */
+    const nameColumnWidth = Math.max(...array.map(o => o.name.length));
+    const taskColumnWidth = Math.max(...array.map(o => String(o.end).length));
+
+    /** move cursor back to the beginning of printed lines and clear everything below */
+    if (array.length > 1) rl.moveCursor(std, 0, 0 - array.length);
+    rl.clearScreenDown();
+
+    let output = "";
     for (let entry of array) {
-      output += `\x1b[2K${entry.name.padStart(20, " ")}: \x1b[92m${
-        entry.bar
-      }\x1b[0m ${String(entry.percentage).padStart(3, " ")}% (${entry.now}/${
-        entry.end
-      })${entry.comment}\n`;
+      output += `${entry.name.padStart(nameColumnWidth, " ")}:\x1b[38;5;156m${entry.bar}\x1b[0m ${String(entry.percentage).padStart(3, " ")}% (${String(entry.now).padStart(taskColumnWidth, " ")}/${String(entry.end).padStart(taskColumnWidth, " ")})${entry.comment}\n`;
     }
     std.write(output);
   };
 
-  getPercenetage = () =>
-    (this.percentage = round0((this.now / this.end) * 100));
+  getPercenetage = () => (this.percentage = round0((this.now / this.end) * 100));
 
   getBar = () => {
     this.bar = Array(round0(this.percentage / 5))
@@ -86,8 +96,8 @@ class Progressbars {
   delete = () => array.splice(this.id, 1);
 }
 
-const bar1 = new Progressbars("series A", 0, 10);
-const bar2 = new Progressbars("series B", 0, 20);
+const bar1 = new Progressbars("123", 0, 10);
+const bar2 = new Progressbars("123456", 0, 20);
 
 setTimeout(() => bar1.increment(1), 300);
 setTimeout(() => bar1.increment(2), 600);
