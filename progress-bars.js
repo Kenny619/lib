@@ -6,21 +6,65 @@ const std = rl.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-/**
- * private properties
- */
-array = [];
 
 /**
- * Use SuperClass and subclass to manage barz and each instances?
- * Manage each instance = object by incremental serial number
- * Call create to generate new objects
- * All objects are contained in this.barz
- * Whenever
+ * Array container class
  */
+class Container {
+  constructor() {
+    this.array = [];
+  }
+
+  update = (obj) => {
+    if (!obj.hasOwnProperty("id")) throw new Error("ID missing.");
+    let updated = false;
+    this.array.forEach((entry, index) => {
+      if (entry.id === obj.id) {
+        this.array[index] = obj;
+        updated = true;
+      }
+    });
+    if (updated === false) this.array.push(obj);
+  };
+
+  get = (id) => {
+    if (this.array.length === 0) return false;
+    return this.array.filter((entry) => entry.id === id)[0];
+  };
+
+  getAll = () => {
+    return this.array;
+  };
+
+  length = () => {
+    return this.array.length;
+  };
+
+  reset = () => {
+    if (this.array.length !== 0) this.array = [];
+  };
+
+  delete = (id) => {
+    if (typeof id !== "number") throw new Error("ID must be a Number.");
+    this.array.forEach((entry, index) => {
+      if (entry.id === id) this.array.splice(index, 1);
+    });
+  };
+
+  isEmpty = () => {
+    return this.array.length === 0 ? true : false;
+  };
+
+  show = () => console.log(this.array);
+
+  showJson = () => console.log(JSON.stringify(this.array));
+}
+
+const array = Object.freeze(new Container());
+
 class Progressbars {
   constructor(name, start, end, comment = "") {
-    this.id = array.length;
+    this.id = array.getAll().length;
     this.name = name;
     this.start = start;
     this.end = end;
@@ -28,15 +72,20 @@ class Progressbars {
     this.comment = comment;
     this.percentage = 0;
     this.bar;
-    this.updateArray(this.id);
+    this.completed = false; //true when all instances reach 100%
+    this.updateArray();
     this.render();
   }
 
-  updateArray = id => {
+  isCompleted = () => {
+    return array.getAll().every((entry) => entry.percentage === 100);
+  };
+
+  updateArray = () => {
     this.getPercenetage();
     this.getBar();
     const obj = {
-      id: array.length,
+      id: this.id,
       name: this.name,
       start: this.start,
       end: this.end,
@@ -45,21 +94,45 @@ class Progressbars {
       bar: this.bar,
       comment: this.comment,
     };
-    array[id] = obj;
+    array.update(obj);
   };
 
   increment = (value, comment = "") => {
     this.now += value;
     this.comment = comment;
-    this.updateArray(this.id);
+    this.updateArray();
     this.render();
 
-    if (array.every(entry => entry.percentage === 100)) {
+    if (this.isCompleted()) {
+      // (array.every((entry) => entry.percentage === 100)) {
+      std.write("\x1B[?25h"); //unhide
       std.close();
     }
   };
 
+  /**
+   * Display a string in bold.
+   * @param {String} string - input string
+   * @returns {String} sring wrapped in a bold ANSI code.
+   */
+
+  bold = (string) => {
+    return `\u001b[1m${string}\x1b[0m`;
+  };
+
+  /**
+   * Adds Color to a string.
+   * @param {String} string
+   * @param {Number} ANSIcolorNumber
+   * @returns {String} - string wrapped in ANSI code.
+   * ** PickAColorAnyColor -> https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+   */
+  color = (string, ANSIcolorNumber) => {
+    return `\x1b[38;5;${ANSIcolorNumber}m${string}\x1b[0m`;
+  };
+
   render = () => {
+    const bars = array.getAll();
     /** get terminal width */
     const width = process.stdout.columns || 50;
     /**
@@ -69,21 +142,32 @@ class Progressbars {
      */
 
     /** adjust name position */
-    const nameColumnWidth = Math.max(...array.map(o => o.name.length));
-    const taskColumnWidth = Math.max(...array.map(o => String(o.end).length));
+    const nameColumnWidth = Math.max(...bars.map((o) => o.name.length));
+    const taskColumnWidth = Math.max(...bars.map((o) => String(o.end).length));
 
     /** move cursor back to the beginning of printed lines and clear everything below */
-    if (array.length > 1) rl.moveCursor(std, 0, 0 - array.length);
-    rl.clearScreenDown();
-
-    let output = "";
-    for (let entry of array) {
-      output += `${entry.name.padStart(nameColumnWidth, " ")}:\x1b[38;5;156m${entry.bar}\x1b[0m ${String(entry.percentage).padStart(3, " ")}% (${String(entry.now).padStart(taskColumnWidth, " ")}/${String(entry.end).padStart(taskColumnWidth, " ")})${entry.comment}\n`;
+    if (bars.length > 1) {
+      rl.moveCursor(std, 0, 0 - bars.length - 1);
     }
+
+    std.write("\n");
+    let output = "";
+    for (let entry of bars) {
+      output += `${entry.name.padStart(nameColumnWidth, " ")}:\x1b[38;5;156m${
+        entry.bar
+      }\x1b[0m ${String(entry.percentage).padStart(3, " ")}% (${String(
+        entry.now
+      ).padStart(taskColumnWidth, " ")}/${String(entry.end).padStart(
+        taskColumnWidth,
+        " "
+      )}) ${entry.comment}\n`;
+    }
+    std.write("\x1B[?25l"); //hide cursor
     std.write(output);
   };
 
-  getPercenetage = () => (this.percentage = round0((this.now / this.end) * 100));
+  getPercenetage = () =>
+    (this.percentage = round0((this.now / this.end) * 100));
 
   getBar = () => {
     this.bar = Array(round0(this.percentage / 5))
@@ -93,22 +177,7 @@ class Progressbars {
   };
 
   pause = () => {};
-  delete = () => array.splice(this.id, 1);
+  delete = () => array.delete(this.id);
 }
-
-const bar1 = new Progressbars("123", 0, 10);
-const bar2 = new Progressbars("123456", 0, 20);
-
-setTimeout(() => bar1.increment(1), 300);
-setTimeout(() => bar1.increment(2), 600);
-setTimeout(() => bar1.increment(3), 900);
-setTimeout(() => bar1.increment(2), 1200);
-setTimeout(() => bar1.increment(2), 1500);
-
-setTimeout(() => bar2.increment(3), 200);
-setTimeout(() => bar2.increment(7), 400);
-setTimeout(() => bar2.increment(3), 800);
-setTimeout(() => bar2.increment(3), 1000);
-setTimeout(() => bar2.increment(4), 1200);
 
 module.exports = Progressbars;

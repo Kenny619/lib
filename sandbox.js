@@ -1,8 +1,23 @@
-let ary = Array(4).fill(undefined);
-Object.seal(ary);
-ary.push(1);
-ary.push(2);
-ary.push(3);
-ary.push(4);
-ary.push(5);
-console.log(ary);
+let array = [];
+
+fn1 = (v) => {
+  return new Promise((res) => {
+    res(`resolved f1! ${v * 5}`);
+  });
+};
+
+fn2 = (v) => {
+  return new Promise((res) => {
+    res(`resolved f2! ${v * 10}`);
+  });
+};
+
+output = (res) => {
+  console.log(res);
+};
+
+array.push(fn1(10));
+array.push(fn2(10));
+
+Promise.resolve(array[1]).then((r) => output(r));
+Promise.resolve(array[0]).then((r) => output(r));
