@@ -113,7 +113,7 @@ class Threads {
       .then((res) => {
         this.fn2(res)
           .then((msg) => {
-            console.log(msg);
+            //console.log(msg);
             this.tasksCompleted++;
             this.createTask();
             this.run();
@@ -124,47 +124,4 @@ class Threads {
   };
 }
 
-function createPost(param) {
-  const timeout = Math.random() * ms;
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const obj = {
-        param: param,
-        msg: `${param.name}#${param.id} resolved after ${round0(
-          timeout
-        )}ms => `,
-      };
-      resolve(obj);
-    }, timeout);
-  });
-}
-
-function save(obj) {
-  const timeout = Math.random() * ms;
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(
-        `${obj.msg}${obj.param.name}#${obj.param.id} resolved after ${round0(
-          timeout
-        )}ms! `
-      );
-    }, timeout);
-  });
-}
-
-/** test code */
-let params = Array(24)
-  .fill(0)
-  .map((entry, index) => {
-    return {
-      name: `ary${index}`,
-      vol: index,
-    };
-  });
-
-const ms = 500;
-
-const threads = new Threads(4, params, createPost, save);
-threads.run();
-
-//module.exports = Threads();
+module.exports = Threads;

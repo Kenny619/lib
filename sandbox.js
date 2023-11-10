@@ -1,23 +1,51 @@
-let array = [];
+const Progressbars = require("./progress-bars.js");
+const Threads = require("./orderManagedThreads.js");
+const my = require("./myUtil.js");
+const round0 = my.round(0);
 
-fn1 = (v) => {
-  return new Promise((res) => {
-    res(`resolved f1! ${v * 5}`);
+function createPost(param) {
+  const timeout = Math.random() * ms;
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const obj = {
+        param: param,
+        msg: `${param.name}#${param.id} resolved after ${round0(
+          timeout
+        )}ms => `,
+      };
+      param.pb.increment(1, "first step done");
+      resolve(obj);
+    }, timeout);
   });
-};
+}
 
-fn2 = (v) => {
-  return new Promise((res) => {
-    res(`resolved f2! ${v * 10}`);
+function save(obj) {
+  const timeout = Math.random() * ms;
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      obj.param.pb.increment(1, "complete");
+
+      resolve(
+        `${obj.msg}${obj.param.name}#${obj.param.id} resolved after ${round0(
+          timeout
+        )}ms! `
+      );
+    }, timeout);
   });
-};
+}
 
-output = (res) => {
-  console.log(res);
-};
+/** test code */
+let params = Array(24)
+  .fill(0)
+  .map((entry, index) => {
+    return {
+      name: `ary${index}`,
+      vol: index,
+      pb: new Progressbars(`ary${index}`, 0, 2),
+    };
+  });
 
-array.push(fn1(10));
-array.push(fn2(10));
+const ms = 500;
 
-Promise.resolve(array[1]).then((r) => output(r));
-Promise.resolve(array[0]).then((r) => output(r));
+const threads = new Threads(4, params, createPost, save);
+threads.run();
