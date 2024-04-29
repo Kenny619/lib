@@ -20,7 +20,9 @@
 
     //Modules https://www.typescriptlang.org/tsconfig#Modules_6244
 //    "moduleResolution": "node",
-    "module": "NodeNext",
+    //"module": "NodeNext",
+    "module": "CommonJS",
+    "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/app/*"],
@@ -35,8 +37,8 @@
     "outDir": "dist",
 
     //JS support https://www.typescriptlang.org/tsconfig#JavaScript_Support_6247
-    "allowJs": true,
-    "checkJs": true,
+    //"allowJs": false,
+    //"checkJs": true,
 
     //Interop Constraints https://www.typescriptlang.org/tsconfig#Interop_Constraints_6252
     "esModuleInterop": true,
@@ -47,6 +49,6 @@
     //Completeness https://www.typescriptlang.org/tsconfig#Completeness_6257
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src", "tests/**/*"],
   "exclude": ["node_modules", "dist", "build", "out", ".vscode", "typings"]
 }

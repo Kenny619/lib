@@ -19,7 +19,7 @@ type outputFunction = {
 	[key in outputformat]: (instance: sharp.Sharp) => sharp.Sharp;
 };
 
-export default function resizeImg(
+export default async function resizeImg(
 	srcDir: string,
 	dstDir: string,
 	quality = 99,
@@ -62,7 +62,7 @@ export default function resizeImg(
 		throw new Error(`Passed extention of "${extension} is incompatible with this program.`);
 
 	if (!fs.existsSync(srcDir)) throw new Error(`Source directory ${srcDir} does not exist.`);
-	if (quality > 99 || quality < 1) throw new Error(`Value (${quality}) of quality needs to be between 1 to 99. `);
+	if (quality > 100 || quality < 1) throw new Error(`Value (${quality}) of quality needs to be between 1 to 100. `);
 
 	/** list files from srcDir */
 	const pickImgFiles = (Dirent: fs.Dirent) => {
@@ -94,9 +94,23 @@ export default function resizeImg(
 			: image.toFormat(extension as keyof FormatEnum).toFile(dstFilePath);
 	}
 
-	console.log(`process completed.\r\n
-    ${dstDir}`);
-	return true;
+	const statusChecker = new Promise((resolve) => {
+		setInterval(() => {
+			if (checkStatus()) {
+				resolve("process completed.");
+			}
+		}, 1000);
+	});
+
+	statusChecker.then((m) => {
+		console.log(m);
+		process.exit();
+	});
+
+	function checkStatus() {
+		const outputs = fs.readdirSync(dstDir, { withFileTypes: true }).filter((Dirent) => Dirent.name.match(extension));
+		return outputs.length === srcFileDirents.length ? true : false;
+	}
 }
 
 function checkDir(dstDir: string): void {
