@@ -1,0 +1,112 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+  <!--[if IE]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+
+
+  <script>
+    // XMLHttpRequestオブジェクトの作成
+    var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+    var request = new XMLHttpRequest();
+
+
+    //parameters
+    var affiliate_id = '4urpleasures-990';
+    var api_id = 'B5pKGfh2z1kpC1LLsXxD';
+    var URL = 'https://api.dmm.com/affiliate/v3/ItemList?api_id=' + api_id + '&affiliate_id=' + affiliate_id + '&site=FANZA&service=digital&floor=videoa&hits=10&sort=match&output=json';
+
+
+
+
+    var keyword = cidfy('MIDE-502');
+
+    var p_title = '';
+    var p_volume = '';
+    var p_review_count = '';
+    var p_review_average = '';
+    var p_url;
+    var p_image_l = '';
+    var p_image_s = '';
+    var p_image_list = '';
+    var p_date ='';
+    var p_genre = {};
+    var p_actress = {};
+    var p_label = {};
+    var p_maker = {};
+
+
+
+    //edit URL
+    URL = URL + '&cid=' + keyword;
+
+    // URLを開く
+    request.open('GET', URL, true);
+
+    // レスポンスが返ってきた時の処理を記述
+    request.onload = function () {
+      // レスポンスが返ってきた時の処理
+      var data = JSON.parse(this.response);
+
+      if(data.result.status == 200){
+
+        update_meta(data);
+
+       }else{
+         //return not found;
+       }
+
+
+    }
+
+    // リクエストをURLに送信
+    request.send();
+
+
+
+//find meta data files
+
+
+
+//change product id aaaa-dddd to aaaaddddd format
+    function cidfy(id){
+
+      var d = id.split('-');
+      return d[0].toLowerCase() + d[1].padStart(5,'0');
+
+    }
+
+    function update_meta(data){
+
+
+
+    }
+
+
+  </script>
+
+  <div id='output'>
+
+    </div>
+
+</body>
+
+</html>

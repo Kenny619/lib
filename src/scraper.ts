@@ -12,6 +12,7 @@ import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 import axios from "axios";
 
+<<<<<<< HEAD
 export async function googleSearch(
 	searchWords: string,
 	mode: string = "search",
@@ -22,6 +23,15 @@ export async function googleSearch(
 		serpSelector: string,
 		titleSelector: string,
 		linkSelector: string;
+=======
+export async function googleSearch(searchWords: string, mode = "search") {
+	const w = searchWords.split(" ");
+	const query = w.length > 1 ? w.join("+") : searchWords;
+	let url: string;
+	let serpSelector: string;
+	let titleSelector: string;
+	let linkSelector: string;
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 
 	switch (mode) {
 		case "news":
@@ -45,7 +55,11 @@ export async function googleSearch(
 		return ua[i];
 	}
 
+<<<<<<< HEAD
 	let headers = {
+=======
+	const headers = {
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 		headers: {
 			"Accept-Encoding": "text/html; charset=UTF-8",
 			"User-Agent": ua,
@@ -57,8 +71,13 @@ export async function googleSearch(
 		const response = await axios.get(url, headers);
 		const jd = new JSDOM(response.data);
 		dom = jd.window.document;
+<<<<<<< HEAD
 	} catch (err: any) {
 		throw new Error(err);
+=======
+	} catch (err: unknown) {
+		throw new Error("Failed to acquire data");
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 	}
 
 	const cards = dom.querySelectorAll(serpSelector);
@@ -66,6 +85,7 @@ export async function googleSearch(
 		link: string;
 		title: string;
 	}
+<<<<<<< HEAD
 	let serp: serp[] = [];
 	if (cards.length === 0) {
 		throw new Error("No result.");
@@ -75,6 +95,17 @@ export async function googleSearch(
 			let title = c.querySelector(titleSelector)?.textContent;
 			if (link && title) serp.push({ link: link, title: title });
 		}
+=======
+	const serp: serp[] = [];
+	if (cards.length === 0) {
+		throw new Error("No result.");
+	}
+
+	for (const c of cards) {
+		const link = c.querySelector(linkSelector)?.getAttribute("href");
+		const title = c.querySelector(titleSelector)?.textContent;
+		if (link && title) serp.push({ link: link, title: title });
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 	}
 	return serp;
 }

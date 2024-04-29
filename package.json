@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "lib",
   "version": "1.0.0",
   "description": "",
@@ -33,4 +34,46 @@
   "devDependencies": {
     "@types/jsdom": "^21.1.6"
   }
+=======
+	"name": "lib",
+	"version": "0.0.1",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "vitest",
+		"prebuild": "rimraf dist",
+		"build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json"
+	},
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rom61977/lib.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/rom61977/lib.git"
+	},
+	"homepage": "https://github.com/rom61977/lib#readme",
+	"dependencies": {
+		"axios": "^1.6.7",
+		"dotenv": "^16.3.1",
+		"event": "^1.0.0",
+		"fs": "^0.0.1-security",
+		"sharp": "^0.33.2",
+		"vite-tsconfig-paths": "^4.2.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.4.1",
+		"@types/jsdom": "^21.1.6",
+		"@types/node": "^20.11.7",
+		"@vitejs/plugin-react": "^4.2.1",
+		"rimraf": "^5.0.5",
+		"ts-jest": "^29.1.2",
+		"ts-node": "^10.9.2",
+		"tsc-alias": "^1.8.8",
+		"vite": "^5.0.9",
+		"vitest": "^1.5.2"
+	}
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 }

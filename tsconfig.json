@@ -1,6 +1,7 @@
 //https://www.typescriptlang.org/tsconfig
 
 {
+<<<<<<< HEAD
 	"compilerOptions": {
 		"forceConsistentCasingInFileNames": true,
 
@@ -46,4 +47,56 @@
 		"skipLibCheck": true
 	},
 	"include": ["src/*"]
+=======
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+
+    //type checking https://www.typescriptlang.org/tsconfig#Type_Checking_6248
+    "strict": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    //Modules https://www.typescriptlang.org/tsconfig#Modules_6244
+//    "moduleResolution": "node",
+    //"module": "NodeNext",
+    "module": "CommonJS",
+    "types": ["vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/app/*"],
+      "@utils/*": ["./src/app/utils/*"],
+      "@type/*": ["./src/typings/*"]
+    },
+
+    //emit https://www.typescriptlang.org/tsconfig#Emit_6246
+    "removeComments": true,
+    "noEmitOnError": true,
+    "sourceMap": true,
+    "outDir": "dist",
+
+    //JS support https://www.typescriptlang.org/tsconfig#JavaScript_Support_6247
+    //"allowJs": false,
+    //"checkJs": true,
+
+    //Interop Constraints https://www.typescriptlang.org/tsconfig#Interop_Constraints_6252
+    "esModuleInterop": true,
+
+    //Lib https://www.typescriptlang.org/tsconfig#lib
+    "target": "ES2022",
+
+    //Completeness https://www.typescriptlang.org/tsconfig#Completeness_6257
+    "skipLibCheck": true
+  },
+  "include": ["src", "tests/**/*"],
+  "exclude": ["node_modules", "dist", "build", "out", ".vscode", "typings"]
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 }
