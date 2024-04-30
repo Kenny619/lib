@@ -1,5 +1,6 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "name": "lib",
   "version": "1.0.0",
   "description": "",
@@ -35,6 +36,8 @@
     "@types/jsdom": "^21.1.6"
   }
 =======
+=======
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 	"name": "lib",
 	"version": "0.0.1",
 	"description": "",
@@ -75,5 +78,8 @@
 		"vite": "^5.0.9",
 		"vitest": "^1.5.2"
 	}
+<<<<<<< HEAD
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
+=======
 >>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 }

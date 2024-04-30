@@ -13,6 +13,7 @@ const { JSDOM } = jsdom;
 import axios from "axios";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export async function googleSearch(
 	searchWords: string,
 	mode: string = "search",
@@ -24,6 +25,8 @@ export async function googleSearch(
 		titleSelector: string,
 		linkSelector: string;
 =======
+=======
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 export async function googleSearch(searchWords: string, mode = "search") {
 	const w = searchWords.split(" ");
 	const query = w.length > 1 ? w.join("+") : searchWords;
@@ -31,6 +34,9 @@ export async function googleSearch(searchWords: string, mode = "search") {
 	let serpSelector: string;
 	let titleSelector: string;
 	let linkSelector: string;
+<<<<<<< HEAD
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
+=======
 >>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 
 	switch (mode) {
@@ -56,7 +62,11 @@ export async function googleSearch(searchWords: string, mode = "search") {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	let headers = {
+=======
+	const headers = {
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 =======
 	const headers = {
 >>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
@@ -72,8 +82,13 @@ export async function googleSearch(searchWords: string, mode = "search") {
 		const jd = new JSDOM(response.data);
 		dom = jd.window.document;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	} catch (err: any) {
 		throw new Error(err);
+=======
+	} catch (err: unknown) {
+		throw new Error("Failed to acquire data");
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 =======
 	} catch (err: unknown) {
 		throw new Error("Failed to acquire data");
@@ -86,6 +101,7 @@ export async function googleSearch(searchWords: string, mode = "search") {
 		title: string;
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	let serp: serp[] = [];
 	if (cards.length === 0) {
 		throw new Error("No result.");
@@ -96,6 +112,8 @@ export async function googleSearch(searchWords: string, mode = "search") {
 			if (link && title) serp.push({ link: link, title: title });
 		}
 =======
+=======
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 	const serp: serp[] = [];
 	if (cards.length === 0) {
 		throw new Error("No result.");
@@ -105,6 +123,9 @@ export async function googleSearch(searchWords: string, mode = "search") {
 		const link = c.querySelector(linkSelector)?.getAttribute("href");
 		const title = c.querySelector(titleSelector)?.textContent;
 		if (link && title) serp.push({ link: link, title: title });
+<<<<<<< HEAD
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
+=======
 >>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 	}
 	return serp;

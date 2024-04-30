@@ -2,6 +2,7 @@
 
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"compilerOptions": {
 		"forceConsistentCasingInFileNames": true,
 
@@ -48,6 +49,8 @@
 	},
 	"include": ["src/*"]
 =======
+=======
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
 
@@ -98,5 +101,8 @@
   },
   "include": ["src", "tests/**/*"],
   "exclude": ["node_modules", "dist", "build", "out", ".vscode", "typings"]
+<<<<<<< HEAD
+>>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
+=======
 >>>>>>> a11ca6fbd26d95422ff97731f19be9204e86c376
 }
