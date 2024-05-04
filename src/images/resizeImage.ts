@@ -1,6 +1,6 @@
-import fs from "fs";
-import sharp, { FormatEnum, ResizeOptions } from "sharp";
-
+import fs from "node:fs";
+import sharp from "sharp";
+import type { FormatEnum, ResizeOptions } from "sharp";
 /**
  * Resize an image from the source file and save it to the destination file path.
  *
@@ -109,7 +109,7 @@ export default async function resizeImg(
 
 	function checkStatus() {
 		const outputs = fs.readdirSync(dstDir, { withFileTypes: true }).filter((Dirent) => Dirent.name.match(extension));
-		return outputs.length === srcFileDirents.length ? true : false;
+		return outputs.length === srcFileDirents.length;
 	}
 }
 
