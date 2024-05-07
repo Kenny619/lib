@@ -1,8 +1,35 @@
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { optionFilter, isFileMovable, isDstDirWritable, validateDirectoryPath } from "./utils/fileUtils.js";
+import {
+	optionFilter,
+	isFileMovable,
+	isDstDirWritable,
+	validateDirectoryPath,
+	createRegexFilters,
+} from "./utils/fileUtils.js";
 
-export async function move(srcDir: string, dstDir: string, option: inputOption) {
+/**
+ * Moves files from a source directory to a destination directory based on specified options.
+ *
+ * @param {string} srcDir - The path to the source directory.
+ * @param {string} dstDir - The path to the destination directory.
+ * @param {options} option - An object containing options for filtering and mode of operation.
+ * @param {string} [option.dirNameFilter] - A filter for directory names. Only directories matching this pattern will be considered.
+ * @param {string} [option.fileNameFilter] - A filter for file names. Only files matching this pattern will be considered.
+ * @param {string} [option.extNameFilter] - A filter for file extensions. Only files with these extensions will be considered.
+ * @param {"copyOverwrite"|"copyDiff"|"copyIfNew"|"moveOverwrite"|"moveDiff"|"moveIfNew"} [option.mode] - The mode to handle file name collisions at the destination. Defaults to "copyDiff".
+ *
+ * @returns {Promise<boolean>} A promise that resolves to true if the operation is complete, or throws an error if the operation fails.
+ *
+ * @throws {Error} If the source directory is not valid or does not exist.
+ * @throws {Error} If the destination directory cannot be created or accessed.
+ * @throws {Error} If there are issues with file operations (e.g., copying, moving, or deleting files).
+ *
+ * @example
+ * // Move all .txt files from 'src' to 'dest', overwriting existing files.
+ * move('src', 'dest', { filterExt: '.txt', mode: 'moveOverwrite' });
+ */
+async function move(srcDir: string, dstDir: string, option: options) {
 	//Validate srcDir
 	try {
 		await validateDirectoryPath(srcDir);
@@ -31,10 +58,12 @@ export async function move(srcDir: string, dstDir: string, option: inputOption) 
 		throw new Error(`${(e as Error).name}.  ${(e as Error).message}}`);
 	}
 
-	if (Object.keys(option).length > 1) {
+	//create Regexp filter
+	const filters = createRegexFilters(option);
+	if (filters) {
 		//async filter condition -> create a promises of check result, await to resolve all, and use them as filter condition.
 		try {
-			const optionFilterResults = await Promise.all(files.map((f) => optionFilter(f, option)));
+			const optionFilterResults = await Promise.all(files.map((f) => optionFilter(f, filters)));
 			files = files.filter((_, i) => optionFilterResults[i]);
 		} catch (e) {
 			throw new Error(`${e}`);
@@ -83,3 +112,5 @@ export async function move(srcDir: string, dstDir: string, option: inputOption) 
 	console.log(`COMPLETE:  ${option.mode} completed for ${successCnt}/${files.length} files.`);
 	return true;
 }
+
+export default move;

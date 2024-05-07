@@ -23,6 +23,10 @@ declare global {
 	 */
 
 	type FilterNames = "dirNameFilter" | "fileNameFilter" | "extNameFilter";
-	type inputOption = Partial<Record<FilterNames, string | null>> & { mode: mode };
-	type regexpOption = Partial<Record<FilterNames, RegExp | null>> & { mode: mode };
+	//	type inputOption = Partial<Record<FilterNames, string | null>> & { mode: mode };
+	//	type regexpOption = Partial<Record<FilterNames, RegExp | null>> & { mode: mode };
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	type options = Partial<{ [key in FilterNames]: string } & { mode: mode } & { [K: string]: any }>;
+	type regexFilters = Partial<{ [key in FilterNames]: RegExp }>;
 }

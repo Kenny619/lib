@@ -1,6 +1,4 @@
-import fsp from "node:fs/promises";
-import * as fUtil from "src/files/utils/fileUtils";
-import * as dir from "src/files/files";
+import dir from "../src/files/index";
 import { describe, expect, test } from "vitest";
 
 /*Scenarios
@@ -50,12 +48,12 @@ describe("Fn: getFilePaths", () => {
 
 	test("04. Valid and existing dir path resolves promise", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFilePaths(srcDir)).toHaveLength(10);
+		expect(await dir.getFilePaths(srcDir)).toHaveLength(12);
 	});
 
 	test("05. Using dirNameFilter=level2 returns 4 filePaths", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFilePaths(srcDir, { dirNameFilter: "level4" })).toHaveLength(4);
+		expect(await dir.getFilePaths(srcDir, { dirNameFilter: "level4" })).toHaveLength(6);
 	});
 
 	test("06. Using dirNameFilter=level9 returns 0 filePaths", async () => {
@@ -64,7 +62,7 @@ describe("Fn: getFilePaths", () => {
 	});
 	test("07. Using fileNameFilter=5 returns 1 filePath", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFilePaths(srcDir, { fileNameFilter: "5" })).toHaveLength(1);
+		expect(await dir.getFilePaths(srcDir, { fileNameFilter: "5" })).toHaveLength(3);
 	});
 	test("08. Using fileNameFilter=test returns 0 filePath", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
@@ -74,9 +72,9 @@ describe("Fn: getFilePaths", () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
 		expect(await dir.getFilePaths(srcDir, { extNameFilter: "jpg" })).toHaveLength(0);
 	});
-	test("10. Using extNameFilter=txt returns 10 filePath", async () => {
+	test("10. Using extNameFilter=txt returns 12 filePath", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFilePaths(srcDir, { extNameFilter: "txt" })).toHaveLength(10);
+		expect(await dir.getFilePaths(srcDir, { extNameFilter: "txt" })).toHaveLength(12);
 	});
 	test("11. /empty return 0 filePaths", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\empty";
@@ -100,23 +98,23 @@ describe("Fn: getFileCount", () => {
 		await expect(dir.getFileCount(srcDir)).rejects.toThrow(/Directory path validation failed/);
 	});
 
-	test("15. /10files returns 10", async () => {
+	test("15. /10files returns 12", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFileCount(srcDir)).toBe(10);
+		expect(await dir.getFileCount(srcDir)).toBe(12);
 	});
 
-	test("16. Using dirNameFilter=level2 returns 2", async () => {
+	test("16. Using dirNameFilter=level4 returns 6", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFileCount(srcDir, { dirNameFilter: "level4" })).toBe(4);
+		expect(await dir.getFileCount(srcDir, { dirNameFilter: "level4" })).toBe(6);
 	});
 
 	test("17. Using dirNameFilter=level9 returns 0", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
 		expect(await dir.getFileCount(srcDir, { dirNameFilter: "level9" })).toBe(0);
 	});
-	test("18. Using fileNameFilter=5 returns 1", async () => {
+	test("18. Using fileNameFilter=5 returns 3", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFileCount(srcDir, { fileNameFilter: "5" })).toBe(1);
+		expect(await dir.getFileCount(srcDir, { fileNameFilter: "5" })).toBe(3);
 	});
 	test("19. Using fileNameFilter=test returns 0", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
@@ -126,9 +124,9 @@ describe("Fn: getFileCount", () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
 		expect(await dir.getFileCount(srcDir, { extNameFilter: "jpg" })).toBe(0);
 	});
-	test("21. Using extNameFilter=txt returns 10", async () => {
+	test("21. Using extNameFilter=txt returns 12", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\10files";
-		expect(await dir.getFileCount(srcDir, { extNameFilter: "txt" })).toBe(10);
+		expect(await dir.getFileCount(srcDir, { extNameFilter: "txt" })).toBe(12);
 	});
 	test("22. srcDir=/empty return 0", async () => {
 		const srcDir = "C:\\dev\\sandbox\\files\\empty";

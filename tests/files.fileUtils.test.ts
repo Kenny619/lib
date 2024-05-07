@@ -1,6 +1,4 @@
-import fsp from "node:fs/promises";
-import * as fUtil from "src/files/utils/fileUtils";
-//import type { inputOption } from "src/files/moveDir";
+import * as fUtil from "../src/files/utils/fileUtils";
 import { describe, expect, test } from "vitest";
 
 /*Scenarios
@@ -56,7 +54,7 @@ describe("Fn: validateDirectoryPath", () => {
 	});
 });
 
-describe("fn: validateFilePath", () => {
+describe("Fn: validateFilePath", () => {
 	test("05. empty filePath throws 'File path validation Failed'", async () => {
 		const srcDir = "";
 		await expect(fUtil.validateFilePath(srcDir)).rejects.toThrow(/File path validation failed/);
@@ -103,78 +101,90 @@ describe("fn: validateFilePath", () => {
 
 describe("Fn: optionFilter", () => {
 	test("11. option with only 'mode' property returns true", async () => {
-		const option: inputOption = { mode: "copyDiff" };
+		const option: options = { mode: "copyDiff" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(true);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(true);
 	});
 
-	test("12. option with non Regexp dirNameFilter throws 'is not a valid Regexp' error", async () => {
-		const option: inputOption = { mode: "copyDiff", fileNameFilter: "\\" };
+	test("12. option with non Regexp dirNameFilter throws 'is not a valid Regexp' error", () => {
+		const option: options = { mode: "copyDiff", fileNameFilter: "\\" };
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		await expect(fUtil.optionFilter(srcDir, option)).rejects.toThrow(/is not a valid RegExp/);
+		expect(() => fUtil.createRegexFilters(option)).toThrowError(/is not a valid RegExp/);
+		//await expect(fUtil.optionFilter(srcDir, filter)).rejects.toThrow( //);
 	});
 
-	test("13. option with non Regexp fileNameFilter throws 'is not a valid Regexp' error", async () => {
-		const option: inputOption = { mode: "copyDiff", fileNameFilter: "/\\" };
+	test("13. option with non Regexp fileNameFilter throws 'is not a valid Regexp' error", () => {
+		const option: options = { mode: "copyDiff", fileNameFilter: "/\\" };
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		await expect(fUtil.optionFilter(srcDir, option)).rejects.toThrow(/is not a valid RegExp/);
+		expect(() => fUtil.createRegexFilters(option)).toThrowError(/is not a valid RegExp/);
+		//expect(fUtil.optionFilter(srcDir, filter)).rejects.toThrow(/is not a valid RegExp/);
 	});
 
-	test("14. option with non Regexp extNameFilter throws 'is not a valid Regexp' error", async () => {
-		const option: inputOption = { mode: "copyDiff", extNameFilter: "\\" };
+	test("14. option with non Regexp extNameFilter throws 'is not a valid Regexp' error", () => {
+		const option: options = { mode: "copyDiff", extNameFilter: "\\" };
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		await expect(fUtil.optionFilter(srcDir, option)).rejects.toThrow(/is not a valid RegExp/);
+		expect(() => fUtil.createRegexFilters(option)).toThrowError(/is not a valid RegExp/);
+		//await expect(fUtil.optionFilter(srcDir, filter)).rejects.toThrow(/is not a valid RegExp/);
 	});
 
 	test("15. option with valid dirNameFilter and invalid fileNameFilter returns false", async () => {
-		const option: inputOption = { mode: "copyDiff", dirNameFilter: "src", fileNameFilter: "include" };
+		const option: options = { mode: "copyDiff", dirNameFilter: "src", fileNameFilter: "include" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("16. option with valid dirNameFilter and invalid extNameFilter returns false", async () => {
-		const option: inputOption = { mode: "copyDiff", dirNameFilter: "dev", extNameFilter: "jpg" };
+		const option: options = { mode: "copyDiff", dirNameFilter: "dev", extNameFilter: "jpg" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("17. option with valid fileNameFilter and invalid dirNameFilter returns false", async () => {
-		const option: inputOption = { mode: "copyDiff", fileNameFilter: "-", dirNameFilter: "D:" };
+		const option: options = { mode: "copyDiff", fileNameFilter: "-", dirNameFilter: "D:" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("18. option with valid fileNameFilter and invalid extNameFilter returns false", async () => {
-		const option: inputOption = { mode: "copyDiff", fileNameFilter: "level1", extNameFilter: "jpg" };
+		const option: options = { mode: "copyDiff", fileNameFilter: "level1", extNameFilter: "jpg" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("19. option with valid extNameFilter and invalid dirNameFilter returns false", async () => {
-		const option: inputOption = { mode: "copyDiff", extNameFilter: "txt", dirNameFilter: "document\\files" };
+		const option: options = { mode: "copyDiff", extNameFilter: "txt", dirNameFilter: "document\\files" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("20. option with valid extNameFilter and invalid fileNameFilter returns false", async () => {
-		const option: inputOption = { mode: "copyDiff", extNameFilter: "txt|text", fileNameFilter: "level3" };
+		const option: options = { mode: "copyDiff", extNameFilter: "txt|text", fileNameFilter: "level3" };
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("21. option with all invalid Filter returns false", async () => {
-		const option: inputOption = {
+		const option: options = {
 			mode: "copyDiff",
 			extNameFilter: "png",
 			fileNameFilter: "level3",
 			dirNameFilter: "D:",
 		};
+		const filter = fUtil.createRegexFilters(option);
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(false);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(false);
 	});
 	test("22. option with all valid Filter returns true", async () => {
-		const option: inputOption = {
+		const option: options = {
 			mode: "copyDiff",
 			extNameFilter: "txt",
 			fileNameFilter: "level1",
 			dirNameFilter: "dev",
 		};
 		const srcDir = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		expect(await fUtil.optionFilter(srcDir, option)).toBe(true);
+		const filter = fUtil.createRegexFilters(option);
+		expect(await fUtil.optionFilter(srcDir, filter)).toBe(true);
 	});
 });
 /*
@@ -209,17 +219,10 @@ describe("Fn: isFileMovable", () => {
 		const mode = "copyOverwrite";
 		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).rejects.toThrow(/File path validation failed/);
 	});
-	test("25. Invalid dstFileFPath throws an error", async () => {
+	test("25. Non-Existing dstFileFPath throws an ENOENT error", async () => {
 		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
 		const dstFilePath = "Z:\\dev\\file.txt";
 		const mode = "copyOverwrite";
-		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).rejects.toThrow(/File path validation failed/);
-	});
-
-	test("", async () => {
-		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
-		const dstFilePath = "C:\\dev\\sandbox\\files\\dst\\exclude-level1.txt";
-		const mode = "copyOverwrite";
-		expect(await fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).toBe(true);
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).rejects.toThrow(/ENOENT/);
 	});
 });

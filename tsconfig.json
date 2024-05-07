@@ -4,19 +4,6 @@
 
 		//type checking https://www.typescriptlang.org/tsconfig#Type_Checking_6248
 		"strict": true,
-		/*
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "exactOptionalPropertyTypes": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-*/
 
 		//Modules https://www.typescriptlang.org/tsconfig#Modules_6244
 		//    "moduleResolution": "node",
@@ -25,9 +12,7 @@
 		"types": ["vitest/globals"],
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/app/*"],
-			"@utils/*": ["./src/app/utils/*"],
-			"@type/*": ["./src/typings/*"]
+			"@types": ["./src/types/*"]
 		},
 
 		//emit https://www.typescriptlang.org/tsconfig#Emit_6246
@@ -45,6 +30,6 @@
 		//Completeness https://www.typescriptlang.org/tsconfig#Completeness_6257
 		"skipLibCheck": true
 	},
-	"include": ["src", "types/**/*"],
+	"include": ["src"],
 	"exclude": ["node_modules"]
 }

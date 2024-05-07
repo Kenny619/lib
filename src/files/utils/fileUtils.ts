@@ -24,10 +24,23 @@ export async function validateFilePath(filePath: string) {
 	}
 }
 
+export function createRegexFilters(option: options): regexFilters {
+	const validatedRegex: regexFilters = {};
+	for (const key in option) {
+		if (key === "dirNameFilter" || key === "fileNameFilter" || key === "extNameFilter") {
+			try {
+				validatedRegex[key as keyof regexFilters] = new RegExp(option[key as keyof regexFilters] as string);
+			} catch (e) {
+				throw new Error(`${option[key as keyof options]} is not a valid RegExp.  ${e as Error}`);
+			}
+		}
+	}
+	return validatedRegex;
+}
 /**
  * Filter out files that do not match option.*Filter RegExp
  */
-export async function optionFilter(filePath: string, option: Partial<inputOption>) {
+export async function optionFilter(filePath: string, filters: regexFilters) {
 	//validate filePath
 	try {
 		await validateFilePath(filePath);
@@ -38,58 +51,19 @@ export async function optionFilter(filePath: string, option: Partial<inputOption
 	//exit with true if threre's no filter in option
 	//if (Object.keys(option).length === 1) return true;
 
-	const validatedRegex: regexpOption = { mode: option.mode as mode };
-	for (const key in option) {
-		if (key !== "mode") {
-			try {
-				validatedRegex[key as keyof Omit<regexpOption, "mode">] = new RegExp(
-					option[key as keyof inputOption] as string,
-				);
-			} catch (e) {
-				throw new Error(`${option[key as keyof inputOption]} is not a valid RegExp.  ${e as Error}`);
-			}
-		}
-	}
-
-	const testPath: { [Key in keyof Required<Omit<regexpOption, "mode">>]: string } = {
+	const testPath: { [Key in FilterNames]: string } = {
 		dirNameFilter: path.dirname(filePath),
-		fileNameFilter: path.basename(filePath),
+		fileNameFilter: path.basename(filePath, path.extname(filePath)),
 		extNameFilter: path.extname(filePath),
 	};
 
-	for (const key in validatedRegex) {
-		if (key !== "mode") {
-			if (
-				!(validatedRegex[key as keyof typeof validatedRegex] as RegExp).test(testPath[key as keyof typeof testPath])
-			) {
-				return false;
-			}
+	for (const key in filters) {
+		if (!(filters[key as keyof typeof filters] as RegExp).test(testPath[key as keyof typeof testPath])) {
+			return false;
 		}
 	}
 	return true;
 }
-
-/**
- * Convert *Name properties in option object to RegExp
- * Throws error when invalid RegExp was passed
- 
-export function strToRegExp(option: inputOption) {
-	const validatedRegex: regexpOption = { mode: option.mode as mode };
-
-	for (const key of Object.keys(option)) {
-		if (key !== "mode") {
-			try {
-				validatedRegex[key as keyof Omit<regexpOption, "mode">] = new RegExp(
-					option[key as keyof inputOption] as string,
-				);
-			} catch (e) {
-				throw new Error(`option.${key}: ${option[key as keyof inputOption]} is not a valid RegExp.  ${e as Error}`);
-			}
-		}
-	}
-	return validatedRegex;
-}
-*/
 
 /**
  * Checks if copy/move operation can be performed on the file
