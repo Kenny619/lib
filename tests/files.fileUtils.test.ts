@@ -99,7 +99,7 @@ describe("Fn: validateFilePath", () => {
 22. option with all valid Filter returns truek 
 */
 
-describe("Fn: optionFilter", () => {
+describe("Fn: createRegexFilters", () => {
 	test("11. option with only 'mode' property returns true", async () => {
 		const option: options = { mode: "copyDiff" };
 		const filter = fUtil.createRegexFilters(option);
@@ -193,16 +193,16 @@ describe("Fn: optionFilter", () => {
 25. Invalid dstFileFPath throws an error
 26. mode=copyOverwrite returns true when a valid dstFilePath doesn't exist
 27. mode=copyOverwrite returns true when a valid dstFilePath exists
-28. mode=moveOverwrite returns true when a valid dstFilePath does not exist
-29. mode=copyOverwrite returns true when a valid dstFilePath exists
+28. mode=moveOverwrite returns true when a valid dstFilePath doesn't exist
+29. mode=moveOverwrite returns true when a valid dstFilePath exists
 30. mode=copyDiff returns true when a valid dstFilePath does not exist
 31. mode=copyDiff returns false when a valid dstFilePath exists
 32. mode=moveDiff returns true when a valid dstFilePath doest not exist
 33. mode=moveDiff returns false when a valid dstFilePath exists
-34. mode=copyIfNew returns false when srcFilepath is newer than dstFilePath
-35. mode=copyIfNew returns true when dstFilepath is newer than srcFilePath
-36. mode=moveIfNew returns false when srcFilepath is newer than dstFilePath
-37. mode=moveIfNew returns true when dstFilepath is newer than srcFilePath
+34. mode=copyIfNew returns true when srcFilepath is newer than dstFilePath
+35. mode=copyIfNew returns false when dstFilepath is newer than srcFilePath
+36. mode=moveIfNew returns true when srcFilepath is newer than dstFilePath
+37. mode=moveIfNew returns false when dstFilepath is newer than srcFilePath
 */
 
 describe("Fn: isFileMovable", () => {
@@ -224,5 +224,79 @@ describe("Fn: isFileMovable", () => {
 		const dstFilePath = "Z:\\dev\\file.txt";
 		const mode = "copyOverwrite";
 		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).rejects.toThrow(/ENOENT/);
+	});
+
+	test("26. mode=copyOverwrite returns true when a valid dstFilePath doesn't exist", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-26";
+		const mode = "copyOverwrite";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+
+	test("27. mode=copyOverwrite returns true when a valid dstFilePath exists", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-26";
+		const mode = "copyOverwrite";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("28. mode=moveOverwrite returns true when a valid dstFilePath doesn't exist", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-26";
+		const mode = "moveOverwrite";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("29. mode=moveOverwrite returns true when a valid dstFilePath exists", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-26";
+		const mode = "moveOverwrite";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("30. mode=copyDiff returns true when a valid dstFilePath does not exist", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-27";
+		const mode = "copyDiff";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("31. mode=copyDiff returns false when a valid dstFilePath exists", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-27";
+		const mode = "copyDiff";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("32. mode=moveDiff returns true when a valid dstFilePath doest not exist", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-28";
+		const mode = "moveDiff";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("33. mode=moveDiff returns false when a valid dstFilePath exists", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\exclude-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\filesUtils-test-28";
+		const mode = "moveDiff";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("34. mode=copyIfNew returns true when srcFilepath is newer than dstFilePath", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\34.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\files\\dst\\34.txt";
+		const mode = "copyIfNew";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
+	});
+	test("35. mode=copyIfNew returns false when dstFilepath is newer than srcFilePath", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\include-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\files\\dst\\include-level1.txt";
+		const mode = "copyIfNew";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(false);
+	});
+	test("36. mode=moveIfNew returns false when dstFilepath is newer than srcFilePath", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\include-level1.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\files\\dst\\include-level1.txt";
+		const mode = "moveIfNew";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(false);
+	});
+	test("37. mode=moveIfNew returns true when srcFilepath is newer than dstFilePath", async () => {
+		const srcFilePath = "C:\\dev\\sandbox\\files\\src\\old.txt";
+		const dstFilePath = "C:\\dev\\sandbox\\files\\dst\\old.txt";
+		const mode = "moveIfNew";
+		await expect(fUtil.isFileMovable(srcFilePath, dstFilePath, mode)).resolves.toBe(true);
 	});
 });

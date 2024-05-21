@@ -20,7 +20,6 @@
 	},
 	"homepage": "https://github.com/Kenny619/lib#readme",
 	"dependencies": {
-		"sharp": "^0.33.3",
 		"vite-tsconfig-paths": "^4.2.2"
 	},
 	"devDependencies": {
